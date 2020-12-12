@@ -7,5 +7,9 @@
   <body>
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
+    <a href="/add">Add File</a>
+    <% for(i = 0; i< data.length; i++) { %>
+      <p>nom: <%= data[i].nom %>, description: <%= data[i].description %>, path: <%= data[i].path %></p>
+    <% } %>
   </body>
 </html>
