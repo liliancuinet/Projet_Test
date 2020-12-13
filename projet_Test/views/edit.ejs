@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add</title>
+</head>
+<body>
+    <form action="/edit" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="id" id="id"  value="<%= data[0].id %>">
+        <input type="hidden" name="path" id="path"  value="<%= data[0].path %>">
+        <input type="hidden" name="name" id="name"  value="<%= data[0].nom %>">
+        <label for="description">Description</label>
+        <input type="text" name="description" id="description" value="<%= data[0].description %>"><br>
+        <label for="fichier">Modifier le Fichier</label>
+        <input type="file" id="fichier" name="fichier" placeholder="Fichier"><br>
+        <input type="submit">
+    </form>
+</body>
+</html>
