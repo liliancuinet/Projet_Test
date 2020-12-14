@@ -26,7 +26,8 @@ router.get('/', function(req, res, next) {
         element.fichier=false;
         var tab = element.path.split("/");
         var path2 = "";
-        for (let i = 0; i < tab.length; i++) {
+        console.log(tab);
+        for (let i = 0; i < tab.length-1; i++) {
           if (i != tab.length-2) {
             path2 += tab[i]+"+";
           }else{
@@ -161,6 +162,7 @@ router.get('/download/:id', function(req, res, next) {
 router.get('/:path', function(req, res, next) {
   var param = req.params.path;
   var tab = param.split("+");
+  var nb = tab.length;
   console.log(tab);
   param = "";
   for (let index = 0; index < tab.length; index++) {
@@ -173,6 +175,20 @@ router.get('/:path', function(req, res, next) {
       const element = rows[index];
       if (param==element.path) {
         element.fichier=true;
+        data.push(element);
+        continue;
+      }
+      var path = "";
+      var tab2 = element.path.split("/");
+      for (let i = 0; i < nb; i++) {
+        path += tab2[i]+"/";
+      }
+      if (path==param) {
+        var path2 = "";
+        path2 = path+tab[nb]+"/";
+        element.fichier=false;
+        element.path2 = path2;
+        element.nompath = tab[nb];
         data.push(element);
       }
     }
