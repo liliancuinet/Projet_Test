@@ -14,6 +14,7 @@ var minioClient = new Minio.Client({
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+
   connection.query("SELECT * FROM FICHIER", function(err, rows) {
     res.render('index', { title: 'Express', data: rows });
   })
@@ -29,7 +30,7 @@ router.post('/add', function(req, res, next) {
     if (err) console.log(err);
     var description = fields.description[0];
     var path = fields.path[0];
-    if (path.charAt(path.length-1)!="/") {
+    if (path.length!=0 && path.charAt(path.length-1)!="/") {
       path += "/";
     }
     console.log(description);
@@ -110,7 +111,27 @@ router.post('/edit', function(req, res, next) {
           if (err4) return console.log(err4);
           res.redirect("/");
         });
+    }else{
+      connection.query("UPDATE fichier SET nom='"+name+"', description='"+description+"' WHERE id="+id, function(err5, rows2) {
+        if (err5) return console.log(err5);
+        res.redirect("/");
+      });
     }
+  })
+})
+
+router.get('/download/:id', function(req, res, next) {
+  var id = req.params.id;
+  console.log(id);
+  connection.query("SELECT * FROM fichier where id="+id, function(err, rows) {
+    console.log(rows[0].path+rows[0].nom);
+    minioClient.fGetObject('project', rows[0].path+rows[0].nom, "/tmp/"+rows[0].nom ,function(err2) {
+      if (err2) {
+        return console.log('Unable to download object', err2)
+      }
+      console.log('The object has downloaded');
+      res.download("/tmp/"+rows[0].nom);
+    })
   })
 })
 

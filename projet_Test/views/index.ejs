@@ -9,7 +9,7 @@
     <p>Welcome to <%= title %></p>
     <a href="/add">Add File</a>
     <% for(i = 0; i< data.length; i++) { %>
-      <p>nom: <%= data[i].nom %>, description: <%= data[i].description %>, path: <%= data[i].path %>, <a href="/delete/<%= data[i].id %>">delete</a>, <a href="/edit/<%= data[i].id %>">edit</a></p>
+      <p>nom: <%= data[i].nom %>, description: <%= data[i].description %>, path: <%= data[i].path %>, <a href="/delete/<%= data[i].id %>">delete</a>, <a href="/edit/<%= data[i].id %>">edit</a>, <a href="/download/<%= data[i].id %>">Download</a></p>
     <% } %>
   </body>
 </html>
