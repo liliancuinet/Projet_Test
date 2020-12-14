@@ -5,11 +5,13 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-    <a href="/add">Add File</a>
+    <a href="/add">Add File</a><br>
     <% for(i = 0; i< data.length; i++) { %>
-      <p>nom: <%= data[i].nom %>, description: <%= data[i].description %>, path: <%= data[i].path %>, <a href="/delete/<%= data[i].id %>">delete</a>, <a href="/edit/<%= data[i].id %>">edit</a>, <a href="/download/<%= data[i].id %>">Download</a></p>
+      <% if (!data[i].fichier) {%>
+          <a href="/<%= data[i].path2 %>"><%= data[i].nompath %></a><br>
+      <% }else{ %>
+        <p>nom: <%= data[i].nom %>, description: <%= data[i].description %>, path: <%= data[i].path %>, <a href="/delete/<%= data[i].id %>">delete</a>, <a href="/edit/<%= data[i].id %>">edit</a>, <a href="/download/<%= data[i].id %>">Download</a></p>
+      <% } %>
     <% } %>
   </body>
 </html>

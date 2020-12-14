@@ -14,15 +14,38 @@ var minioClient = new Minio.Client({
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-
+  var param = "";
   connection.query("SELECT * FROM FICHIER", function(err, rows) {
-    res.render('index', { title: 'Express', data: rows });
+    var data = [];
+    for (let index = 0; index < rows.length; index++) {
+      const element = rows[index];
+      if (param==element.path) {
+        element.fichier=true;
+        data.push(element);
+      }else{
+        element.fichier=false;
+        var tab = element.path.split("/");
+        var path2 = "";
+        for (let i = 0; i < tab.length; i++) {
+          if (i != tab.length-2) {
+            path2 += tab[i]+"+";
+          }else{
+            path2 += tab[i];
+          }
+        }
+        element.path2 = path2;
+        element.nompath = tab[0];
+        data.unshift(element);
+      }
+    }
+    res.render('index', { title: 'Express', data: data });
   })
 });
 
 router.get('/add', function(req, res, next) {
   res.render('add');
 });
+
 
 router.post('/add', function(req, res, next) {
   var form = new multiparty.Form();
@@ -134,5 +157,28 @@ router.get('/download/:id', function(req, res, next) {
     })
   })
 })
+
+router.get('/:path', function(req, res, next) {
+  var param = req.params.path;
+  var tab = param.split("+");
+  console.log(tab);
+  param = "";
+  for (let index = 0; index < tab.length; index++) {
+    param += tab[index]+"/";
+  }
+  console.log(param);
+  connection.query("SELECT * FROM FICHIER", function(err, rows) {
+    var data = [];
+    for (let index = 0; index < rows.length; index++) {
+      const element = rows[index];
+      if (param==element.path) {
+        element.fichier=true;
+        data.push(element);
+      }
+    }
+    console.log(data);
+    res.render('index', { title: 'Express', data: data });
+  })
+});
 
 module.exports = router;
