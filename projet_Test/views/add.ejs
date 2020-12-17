@@ -3,17 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link href='https://fonts.googleapis.com/css?family=Satisfy' rel='stylesheet'>
     <title>Add</title>
 </head>
 <body>
-    <form action="/add" method="POST" enctype="multipart/form-data">
-        <label for="description">Description</label>
-        <input type="text" name="description" id="description"><br>
-        <label for="path">Emplacement</label>
-        <input type="text" name="path" id="path"><br>
-        <label for="fichier">Ajouter un Fichier</label>
-        <input type="file" id="fichier" name="fichier" placeholder="Fichier"><br>
-        <input type="submit">
-    </form>
+    <header>
+        <h1>Gestionnaire de fichier</h1>
+    </header>
+    <div>
+        <form action="/add" method="POST" enctype="multipart/form-data">
+            <label for="description">Description</label>
+            <input type="text" name="description" id="description"><br>
+            <label for="path">Emplacement</label>
+            <input type="text" name="path" id="path"><br>
+            <label for="fichier">Ajouter un Fichier</label><br>
+            <input type="file" id="fichier" name="fichier" placeholder="Fichier"><br>
+            <input type="submit">
+        </form>
+    </div>
 </body>
 </html>

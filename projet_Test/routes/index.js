@@ -15,6 +15,7 @@ var minioClient = new Minio.Client({
 /* GET home page. */
 router.get('/', function(req, res, next) {
   var param = "";
+  var tabDossier = []
   connection.query("SELECT * FROM FICHIER", function(err, rows) {
     var data = [];
     for (let index = 0; index < rows.length; index++) {
@@ -23,9 +24,10 @@ router.get('/', function(req, res, next) {
         element.fichier=true;
         data.push(element);
       }else{
-        element.fichier=false;
         var tab = element.path.split("/");
-        var path2 = "";
+        if (!tabDossier.includes(tab[0])) {
+          element.fichier=false;
+          var path2 = "";
         console.log(tab);
         for (let i = 0; i < tab.length-1; i++) {
           if (i != tab.length-2) {
@@ -35,11 +37,13 @@ router.get('/', function(req, res, next) {
           }
         }
         element.path2 = path2;
-        element.nompath = tab[0];
+        element.nompath = tab[0]+"/";
+        tabDossier.push(tab[0]);
         data.unshift(element);
+        }
       }
     }
-    res.render('index', { title: 'Express', data: data });
+    res.render('index', { title: 'Express', data: data, retour: null });
   })
 });
 
@@ -142,7 +146,39 @@ router.post('/edit', function(req, res, next) {
       });
     }
   })
-})
+});
+
+
+
+router.get('/move/:id', function(req, res, next) {
+  var id = req.params.id;
+  connection.query("SELECT * FROM fichier WHERE id="+id, function(err, rows) {
+    res.render('move', { data: rows});
+  })
+});
+
+router.post('/move', function(req, res, next) {
+  var id = req.body.id;
+  var name = req.body.name;
+  var path = req.body.path;
+  var pathOld = req.body.pathOld;
+  if (path.length!=0 && path.charAt(path.length-1)!="/") {
+    path += "/";
+  }
+  minioClient.copyObject('project', path+name, '/project/'+pathOld+name, null, function(e, data) {
+    if (e) {
+      return console.log(e);
+    }
+    console.log("Successfully copied the object:");
+    minioClient.removeObject('project', pathOld+name, function(err) {
+      if (err) console.log(err);
+    })
+  })
+  connection.query("UPDATE fichier SET path='"+path+"' WHERE id="+id, function(err2, rows) {
+    if (err2) console.log(err2);
+    res.redirect('/');
+  })
+});
 
 router.get('/download/:id', function(req, res, next) {
   var id = req.params.id;
@@ -157,17 +193,27 @@ router.get('/download/:id', function(req, res, next) {
       res.download("/tmp/"+rows[0].nom);
     })
   })
-})
+});
 
 router.get('/:path', function(req, res, next) {
   var param = req.params.path;
   var tab = param.split("+");
   var nb = tab.length;
+  console.log("tab :");
   console.log(tab);
   param = "";
+  var retour = "";
+  for (let j = 0; j < nb-1; j++) {
+    if (i==nb-2) {
+      retour += tab[j];
+    }else if (i < nb-2) {
+      retour += tab[j] + "+";
+    }
+  }
   for (let index = 0; index < tab.length; index++) {
     param += tab[index]+"/";
   }
+  console.log("param :");
   console.log(param);
   connection.query("SELECT * FROM FICHIER", function(err, rows) {
     var data = [];
@@ -185,15 +231,21 @@ router.get('/:path', function(req, res, next) {
       }
       if (path==param) {
         var path2 = "";
-        path2 = path+tab[nb]+"/";
+        for (let i = 0; i < tab2.length-1; i++) {
+          if (i != tab2.length-2) {
+            path2 += tab2[i]+"+";
+          }else{
+            path2 += tab2[i];
+          }
+        }
         element.fichier=false;
         element.path2 = path2;
-        element.nompath = tab[nb];
-        data.push(element);
+        element.nompath = tab2[nb]+"/";
+        data.unshift(element);
       }
     }
     console.log(data);
-    res.render('index', { title: 'Express', data: data });
+    res.render('index', { title: 'Express', data: data, retour: retour });
   })
 });
 

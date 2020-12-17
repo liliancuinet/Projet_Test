@@ -1,17 +1,46 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= title %></title>
+    <title>Gestionnaire de fichier</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+  
+    <link href='https://fonts.googleapis.com/css?family=Satisfy' rel='stylesheet'>
   </head>
   <body>
-    <a href="/add">Add File</a><br>
-    <% for(i = 0; i< data.length; i++) { %>
-      <% if (!data[i].fichier) {%>
-          <a href="/<%= data[i].path2 %>"><%= data[i].nompath %></a><br>
-      <% }else{ %>
-        <p>nom: <%= data[i].nom %>, description: <%= data[i].description %>, path: <%= data[i].path %>, <a href="/delete/<%= data[i].id %>">delete</a>, <a href="/edit/<%= data[i].id %>">edit</a>, <a href="/download/<%= data[i].id %>">Download</a></p>
-      <% } %>
+    <header>
+      <h1>Gestionnaire de fichier</h1>
+    </header>
+    <a href="/add" class="add">Add File</a><br>
+    <% if (retour!=null){ %>
+      <a href="/<%= retour %>"><img class="img-retour" src="/images/retour.png"></a>
     <% } %>
+    <table>
+      <tr>
+          <td class="col-Nom">Nom</td>
+          <td class="col-Desc">Description</td>
+          <td class="col-Autre"></td>
+          <td class="col-Autre"></td>
+          <td class="col-Autre"></td>
+      </tr>
+      <% for(i = 0; i< data.length; i++) { %>
+        <% if (!data[i].fichier) {%>
+          <tr>
+            <td><img src="/images/folder.png"><a href="/<%= data[i].path2 %>"><%= data[i].nompath %></a></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        <% }else{ %>
+          <tr>
+            <td><a href="/download/<%= data[i].id %>"><%= data[i].nom %></a></td>
+            <td><%= data[i].description %></td>
+            <td><a href="/edit/<%= data[i].id %>">Modifier</a></td>
+            <td><a href="/delete/<%= data[i].id %>">Supprimer</a></td>
+            <td><a href="/move/<%= data[i].id %>">Déplacer</a></td>
+          </tr>
+        <% } %>
+      <% } %>
+   </table>
   </body>
 </html>
