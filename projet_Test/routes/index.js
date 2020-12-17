@@ -119,7 +119,7 @@ router.post('/edit', function(req, res, next) {
     var oldname = fields.name[0];
     console.log(description);
     console.log(id);
-    if (files.fichier!=undefined) {
+    if (files.fichier[0].originalFilename!="") {
       var file = files.fichier[0].path;
       var name = files.fichier[0].originalFilename;
         var metaData = {
@@ -140,7 +140,7 @@ router.post('/edit', function(req, res, next) {
           res.redirect("/");
         });
     }else{
-      connection.query("UPDATE fichier SET nom='"+name+"', description='"+description+"' WHERE id="+id, function(err5, rows2) {
+      connection.query("UPDATE fichier SET description='"+description+"' WHERE id="+id, function(err5, rows2) {
         if (err5) return console.log(err5);
         res.redirect("/");
       });
@@ -201,6 +201,7 @@ router.get('/:path', function(req, res, next) {
   var nb = tab.length;
   console.log("tab :");
   console.log(tab);
+  var tabDossier = []
   param = "";
   var retour = "";
   for (let j = 0; j < nb-1; j++) {
@@ -229,19 +230,22 @@ router.get('/:path', function(req, res, next) {
       for (let i = 0; i < nb; i++) {
         path += tab2[i]+"/";
       }
-      if (path==param) {
-        var path2 = "";
-        for (let i = 0; i < tab2.length-1; i++) {
-          if (i != tab2.length-2) {
-            path2 += tab2[i]+"+";
-          }else{
-            path2 += tab2[i];
+      if (!tabDossier.includes(path)) {
+        tabDossier.push(path);
+        if (path==param) {
+          var path2 = "";
+          for (let i = 0; i < tab2.length-1; i++) {
+            if (i != tab2.length-2) {
+              path2 += tab2[i]+"+";
+            }else{
+              path2 += tab2[i];
+            }
           }
+          element.fichier=false;
+          element.path2 = path2;
+          element.nompath = tab2[nb]+"/";
+          data.unshift(element);
         }
-        element.fichier=false;
-        element.path2 = path2;
-        element.nompath = tab2[nb]+"/";
-        data.unshift(element);
       }
     }
     console.log(data);
